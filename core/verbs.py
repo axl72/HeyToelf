@@ -1,8 +1,8 @@
 from random import randint
 from copy import copy
+import csv
 
-
-def download_verbs(path):
+def download_verbs(path: str) -> list[list[str]]:
     file = open(path, "r")
     content = file.readlines()
     file.close()
@@ -10,7 +10,7 @@ def download_verbs(path):
     lista.pop(0)
     return lista
 
-def upload_verb(path, verb_string):
+def upload_verb(path: str, verb_string: str):
     file = open(path, 'r')
     content = file.readlines()
     file.close()
@@ -23,8 +23,17 @@ def upload_verb(path, verb_string):
     file.write(''.join(content))
     file.close()
 
+def consult_verb(path: str, verb: str) -> str:
+    with open(path, 'r') as csvfile:
+        for row in csvfile:
+            if verb == row.split(";")[0]:
+                return row
+    return None
 
-def get_verb(verbs_list):
+
+
+def get_verb(verbs_list: list[str]) -> str:
+    """Función que recibe una lista de verbos y retorna un verbo aleatoriamente, así mismo este verbo es eliminado de la lista."""
     max_size = len(verbs_list) - 1
     return verbs_list.pop(randint(0, max_size))
 
