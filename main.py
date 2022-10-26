@@ -1,4 +1,4 @@
-from gui.random_verbs import *
+from gui.widgets import *
 from core.verbs import get_verb, download_verbs, upload_verb, consult_verb
 from core.scraper import get_urls, get_verb_from_web
 
@@ -9,15 +9,15 @@ class MainWindow(tk.Tk):
         self.bind("<Return>", lambda event: self.__submit__())
         self.geometry("800x500+300+200")
         self.verbs = [verb[0] for verb in download_verbs("cache")]
-        self.title = Label(self, 18,"Random Verbs Selector")
-        self.verb = Label(self, 21, get_verb(self.verbs))
+        self.title = Label(self, 18, "Random Verbs Selector")
+        self.verb = Label(self, 25, get_verb(self.verbs))
 
         self.label1 = Label(self, 18, "Past Tense")
         self.input_past_tense = Entry(self)
 
         self.label2 = Label(self, 18, "Present Participle")
         self.input_present_participle = Entry(self)
-        
+
         self.label3 = Label(self, 18, "Past Participle")
         self.input_past_participle = Entry(self)
 
@@ -28,13 +28,15 @@ class MainWindow(tk.Tk):
         self.upload = Button(self, "Upload", self.__upload__)
 
     def __submit__(self):
-        text_inputs = (self.input_present_participle, self.input_past_tense, self.input_past_participle)
+        text_inputs = (self.input_present_participle,
+                       self.input_past_tense, self.input_past_participle)
         inputs = [button.get().lower() for button in text_inputs]
+
         def is_complete(inputs: list[str]) -> bool:
             lista = list(filter(lambda x: True if x != '' else False, inputs))
-            return len(inputs) == len(lista) # It should there are any form to compare lists in python
+            # It should there are any form to compare lists in python
+            return len(inputs) == len(lista)
 
-        
         if not is_complete(inputs):
             return
 
@@ -45,9 +47,15 @@ class MainWindow(tk.Tk):
             return
         if query != inputs:
             return
-        
+
+        if not self.verbs:
+            self.verb.config(text="You're finished")
+            [entry.delete('0', 'end') for entry in text_inputs]
+            text_inputs[1].focus_set()
+            return
+
         new_verb = get_verb(self.verbs)
-        self.verb.config(text = new_verb)
+        self.verb.config(text=new_verb)
         [entry.delete('0', 'end') for entry in text_inputs]
         text_inputs[1].focus_set()
 
